@@ -28,21 +28,12 @@ pipeline {
             }
 			post {
 				always {
-					step([
-						$class         : 'FindBugsPublisher',
-						pattern        : 'build/reports/findbugs/*.xml',
-						canRunOnFailed : true
-					])
-					step([
-						$class         : 'PmdPublisher',
-						pattern        : 'build/reports/pmd/*.xml',
-						canRunOnFailed : true
-					])
-					step([
-						$class: 'CheckStylePublisher', 
-						pattern: 'build/reports/checkstyle/*.xml',
-						canRunOnFailed : true
-					])
+//          junit testResults: '**/target/surefire-reports/TEST-*.xml'
+          recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
+          recordIssues enabledForFailure: true, tool: checkStyle()
+          recordIssues enabledForFailure: true, tool: spotBugs()
+          recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
+          recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
 				}
 			}
         }
